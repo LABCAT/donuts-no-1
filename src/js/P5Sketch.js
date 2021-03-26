@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from "react";
 import "./globals";
 import "p5/lib/addons/p5.sound";
 import * as p5 from "p5";
+import TriadicColorCalculator from "./TriadicColorCalculator.js";
 import audio from "../audio/donuts-no-1.ogg";
 import cueSet1 from "./cueSet1.js";
 import cueSet2 from "./cueSet2.js";
@@ -25,7 +26,7 @@ const P5Sketch = () => {
       p.barAsSeconds = Math.floor((60 / p.tempo) * 4 * 100000) / 100000;
 
       p.midiRange = {
-        low: 28,
+        low: 40,
         high: 65,
       };
 
@@ -39,7 +40,7 @@ const P5Sketch = () => {
 
       p.cueSet2Completed = [];
 
-      p.colours = ["#22c5ff", "#af24ff", "#ff6822", "#ffd622"];
+      p.colours = [];
 
       p.shapeOptions = ["ellipse", "rect", "equilateral", "hexagon", "octagon"];
 
@@ -55,9 +56,11 @@ const P5Sketch = () => {
         p.canvas = p.createCanvas(p.canvasWidth, p.canvasHeight);
         p.rectMode(p.CENTER);
         p.background("#000000");
+        p.colorMode(p.HSB);
         p.noFill();
         p.strokeWeight(0.5);
-        p.bassShape = p.random(p.shapeOptions)
+        p.bassShape = p.random(p.shapeOptions);
+        p.colours = TriadicColorCalculator(p.random(0, 360), p.random(20, 100));
         p.song.onended(p.logCredits);
 
         for (let i = 0; i < cueSet1.length; i++) {
@@ -143,13 +146,13 @@ const P5Sketch = () => {
                 }
                 x = x > 0 ? x : 0;
             }
-            const xPos = (p.width - p.width / 32) - (p.width / p.barAsSeconds) * x;
+            const xPos = p.width / 32 + (p.width / p.barAsSeconds) * x;
             const yPos = p.map(
                 vars.midi,
                 p.midiRange2.low,
                 p.midiRange2.high,
-                p.height - p.canvasWidth / 64,
-                0 + p.canvasWidth / 64
+                0 + p.canvasWidth / 64,
+                p.height - p.canvasWidth / 64
             );
             if (vars.currentCue < 143) {
                 p.drawDonut(
@@ -187,7 +190,7 @@ const P5Sketch = () => {
         for (var i = 0; i < numOfRotations * 2; i++) {
           for (var j = -2; j <= 2; j++) {}
 
-          p.stroke(colour);
+          p.stroke(colour.h, colour.s, colour.b);
           //call the function as detemined by the variable shape
           //rect and ellipse are built in p5.js
           //tri,hexa & octa are defined in this file
