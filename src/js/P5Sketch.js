@@ -55,12 +55,12 @@ const P5Sketch = () => {
       p.setup = () => {
         p.canvas = p.createCanvas(p.canvasWidth, p.canvasHeight);
         p.rectMode(p.CENTER);
-        p.background("#000000");
+        p.background(0);
         p.colorMode(p.HSB);
         p.noFill();
         p.strokeWeight(0.5);
         p.bassShape = p.random(p.shapeOptions);
-        p.colours = TriadicColorCalculator(p.random(0, 360), p.random(20, 100));
+        p.colours = TriadicColorCalculator(p.random(0, 360), p.random(50, 100));
         p.song.onended(p.logCredits);
 
         for (let i = 0; i < cueSet1.length; i++) {
@@ -85,7 +85,9 @@ const P5Sketch = () => {
       };
 
       p.draw = () => {
-        //p.background("#ffffff");
+        if (p.song && p.song.isPlaying()) {
+
+        }
       };
 
       p.executeCueSet1 = (vars) => {
@@ -115,16 +117,16 @@ const P5Sketch = () => {
               p.shapeSize
             );
           } else {
-            const steps = 116;
+            const steps = 360;
             const delayAmount = parseInt(vars.duration * 1000) / steps;
-            const finalShape = 'ellipse';
+            const finalShape = "ellipse";
             const shapeReducer = p.shapeSize / steps;
-            const distance = p.width - xPos;
             for (let i = 0; i < steps; i++) {
               setTimeout(function () {
+                p.rotate(-p.PI / 360);
                 p.drawDonut(
                   p.random(p.colours),
-                  xPos + (distance / steps) * i,
+                  xPos,
                   yPos,
                   finalShape,
                   p.shapeSize - i * shapeReducer
@@ -163,23 +165,23 @@ const P5Sketch = () => {
                     p.canvasWidth / 32
                 );
             } else {
-                const steps = 116;
+              
+                const steps = 360;
                 const delayAmount = parseInt(vars.duration * 1000) / steps;
-                const shapeReducer = p.shapeSize / steps;
-                const distance = p.width - xPos;
+                const shapeReducer = p.canvasWidth / 32 / steps;
                 for (let i = 0; i < steps; i++) {
                     setTimeout(function () {
+                      p.rotate(p.PI / 360);
                         p.drawDonut(
-                        p.random(p.colours),
-                        xPos - (distance / steps) * i,
-                        yPos,
-                        p.bassShape,
-                        p.canvasWidth / 32 - i * shapeReducer
+                          p.random(p.colours),
+                          xPos,
+                          yPos,
+                          p.bassShape,
+                          p.canvasWidth / 32 - i * shapeReducer
                         );
                     }, delayAmount * i);
                 }
             }
-            
          }
        };
 
