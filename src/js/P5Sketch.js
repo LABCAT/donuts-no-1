@@ -40,6 +40,10 @@ const P5Sketch = () => {
 
       p.cueSet2Completed = [];
 
+      p.donuts1 = [];
+
+      p.donuts2 = [];
+
       p.colours = [];
 
       p.shapeOptions = ["ellipse", "rect", "equilateral", "hexagon", "octagon"];
@@ -86,9 +90,51 @@ const P5Sketch = () => {
 
       p.draw = () => {
         if (p.song && p.song.isPlaying()) {
-
+          if (p.donuts1.length < 178) {
+            p.background(0);
+            if (p.donuts2.length === 36) {
+              const lastDonut = p.donuts2[p.donuts2.length - 1];
+              p.donuts2 = [];
+              p.donuts2.push(lastDonut);
+            }
+          }
+          else {
+            p.noLoop();
+          }
+          for (let i = 0; i < p.donuts1.length; i++) {
+            const donut = p.donuts1[i];
+            p.drawDonut(donut);
+          }
+          for (let i = 0; i < p.donuts2.length; i++) {
+            const donut = p.donuts2[i];
+            p.drawDonut(donut);
+          }
+          
         }
       };
+
+      p.drawDonut = (donut) => {
+        if(donut.delay){
+          setTimeout(function () {
+            p.donut(
+              donut.colour,
+              donut.xPos,
+              donut.yPos,
+              donut.shape,
+              donut.size
+            );
+          }, donut.delay);
+        }
+        else {
+          p.donut(
+            donut.colour,
+            donut.xPos,
+            donut.yPos,
+            donut.shape,
+            donut.size
+          );
+        }
+      }
 
       p.executeCueSet1 = (vars) => {
         if (!p.cueSet1Completed.includes(vars.currentCue)) {
@@ -109,29 +155,28 @@ const P5Sketch = () => {
             0 + p.shapeSize / 2
           );
           if (vars.currentCue < 178) {
-            p.drawDonut(
-              p.random(p.colours),
-              xPos,
-              yPos,
-              p.random(p.shapeOptions),
-              p.shapeSize
-            );
+            p.donuts1.push({
+              colour: p.random(p.colours),
+              xPos: xPos,
+              yPos: yPos,
+              shape: p.random(p.shapeOptions),
+              size: p.shapeSize,
+              delay: 0,
+            });
           } else {
             const steps = 360;
             const delayAmount = parseInt(vars.duration * 1000) / steps;
             const finalShape = "ellipse";
             const shapeReducer = p.shapeSize / steps;
             for (let i = 0; i < steps; i++) {
-              setTimeout(function () {
-                p.rotate(-p.PI / 360);
-                p.drawDonut(
-                  p.random(p.colours),
-                  xPos,
-                  yPos,
-                  finalShape,
-                  p.shapeSize - i * shapeReducer
-                );
-              }, delayAmount * i);
+              p.donuts1.push({
+                colour: p.random(p.colours),
+                xPos: xPos,
+                yPos: yPos,
+                shape: finalShape,
+                size: p.shapeSize - i * shapeReducer,
+                delay: delayAmount * i,
+              });
             }
           }
           p.shapeSize++;
@@ -157,35 +202,34 @@ const P5Sketch = () => {
                 p.height - p.canvasWidth / 64
             );
             if (vars.currentCue < 143) {
-                p.drawDonut(
-                    p.random(p.colours),
-                    xPos,
-                    yPos,
-                    p.bassShape,
-                    p.canvasWidth / 32
-                );
+                p.donuts2.push({
+                  colour: p.random(p.colours),
+                  xPos: xPos,
+                  yPos: yPos,
+                  shape: p.bassShape,
+                  size: p.canvasWidth / 32,
+                  delay: 0,
+                });
             } else {
               
                 const steps = 360;
                 const delayAmount = parseInt(vars.duration * 1000) / steps;
                 const shapeReducer = p.canvasWidth / 32 / steps;
                 for (let i = 0; i < steps; i++) {
-                    setTimeout(function () {
-                      p.rotate(p.PI / 360);
-                        p.drawDonut(
-                          p.random(p.colours),
-                          xPos,
-                          yPos,
-                          p.bassShape,
-                          p.canvasWidth / 32 - i * shapeReducer
-                        );
-                    }, delayAmount * i);
+                  p.donuts2.push({
+                    colour: p.random(p.colours),
+                    xPos: xPos,
+                    yPos: yPos,
+                    shape: p.bassShape,
+                    size: p.canvasWidth / 32 - i * shapeReducer,
+                    delay: delayAmount * i,
+                  });
                 }
             }
          }
        };
 
-      p.drawDonut = (colour, translateX, translateY, shape, size) => {
+      p.donut = (colour, translateX, translateY, shape, size) => {
         p.translate(translateX, translateY);
 
         var numOfRotations = 16;
