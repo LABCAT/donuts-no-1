@@ -92,10 +92,16 @@ const P5Sketch = () => {
         if (p.song && p.song.isPlaying()) {
           if (p.donuts1.length < 178) {
             p.background(0);
-            if (p.donuts2.length === 36) {
+            if (p.donuts2.length === 36 && parseInt(p.song.currentTime()) < 50) {
+              console.log(parseInt(p.song.currentTime()));
               const lastDonut = p.donuts2[p.donuts2.length - 1];
               p.donuts2 = [];
               p.donuts2.push(lastDonut);
+            }
+            if (p.donuts1.length === 71) {
+              const lastDonut = p.donuts1[p.donuts1.length - 1];
+              p.donuts1 = [];
+              p.donuts1.push(lastDonut);
             }
           }
           else {
